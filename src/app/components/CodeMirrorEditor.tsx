@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useCallback, useEffect, useState } from "react";
-import {EditorView, basicSetup} from "codemirror"
-import {EditorState, Extension} from "@codemirror/state"
-import { javascript } from "@codemirror/lang-javascript";
+import React, { useCallback, useEffect, useState } from 'react';
+import { EditorView, basicSetup } from 'codemirror';
+import { EditorState, Extension } from '@codemirror/state';
+import { javascript } from '@codemirror/lang-javascript';
 import styles from './CodeMirrorEditor.module.scss';
 
 function useCodeMirror(extensions: Extension[]) {
@@ -20,13 +20,13 @@ function useCodeMirror(extensions: Extension[]) {
 
     const view = new EditorView({
       state: EditorState.create({
-        extensions: [basicSetup, javascript(), ...extensions],
+        extensions: [basicSetup, javascript(), ...extensions]
       }),
-      parent: element,
+      parent: element
     });
 
     return () => view?.destroy();
-  }, [element]);
+  }, [element, extensions]);
 
   return { ref };
 }
