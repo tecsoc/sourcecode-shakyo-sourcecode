@@ -1,4 +1,4 @@
-import styles from './page.module.css';
+import styles from './page.module.sass';
 import CodeMirror from '@/app/components/CodeMirrorEditor';
 
 export default function Home() {

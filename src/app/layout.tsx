@@ -1,4 +1,4 @@
-import './globals.css';
+import './globals.sass';
 import { Inter } from 'next/font/google';
 import React from 'react';
 

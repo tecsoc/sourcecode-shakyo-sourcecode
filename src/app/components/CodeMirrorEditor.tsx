@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState, Extension } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';
-import styles from './CodeMirrorEditor.module.scss';
+import styles from './CodeMirrorEditor.module.sass';
 
 function useCodeMirror(extensions: Extension[]) {
   const [element, setElement] = useState<HTMLElement>();
