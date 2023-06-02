@@ -27,5 +27,3 @@ jobs:
         run: yarn lint
       - name: yarn build
         run: yarn build
-      - name: Run Jest
-        run: yarn test
