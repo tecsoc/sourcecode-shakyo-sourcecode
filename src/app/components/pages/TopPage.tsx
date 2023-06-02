@@ -8,8 +8,6 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import styles from './TopPage.module.sass';
 import CodeMirrorEditor from '@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor';
 import { useDidUpdateEffect } from '@/app/modules/useDidUpdateEffect';
-import CommonHead from '@/app/components/atoms/CommonHead';
-import RootLayout from '@/app/layout';
 
 const TopPage = () => {
   const importSourceUrlRef = useRef<HTMLInputElement | null>(null);
@@ -54,9 +52,7 @@ const TopPage = () => {
     [editorOnPaste, editorOnInput]
   );
 
-  return <>
-  <RootLayout>
-    <CommonHead title='写経タイピング' description='ソースコードを写経しながらタイピングの練習をしましょう。' />
+  return (
     <main className={styles.main}>
       <h1>写経タイピング</h1>
       <div className={styles.github_url_wrapper}>
@@ -71,11 +67,13 @@ const TopPage = () => {
         </Button>
       </div>
       <div className={styles.editor_wrapper}>
+        {/* <CodeMirrorEditor onChange={EditorOnChange} domEventHandlers={domEventHandlers}/> */}
         <CodeMirrorEditor value={typingSourceCodeString} domEventHandlers={domEventHandlers} />
+        {/* <CodeMirrorEditor />
+        <CodeMirrorEditor /> */}
         <CodeMirrorEditor value={answerSourceCodeString} enable={false} />
       </div>
     </main>
-  </RootLayout>
-  </>;
+  );
 };
 export default TopPage;
