@@ -6,7 +6,7 @@ import { EditorView } from 'codemirror';
 import { DOMEventMap } from '@codemirror/view';
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import styles from './TopPage.module.sass';
-import CodeMirrorEditor from '@/app/components/CodeMirrorEditor/CodeMirrorEditor';
+import CodeMirrorEditor from '@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor';
 import { useDidUpdateEffect } from '@/app/modules/useDidUpdateEffect';
 
 const TopPage = () => {
