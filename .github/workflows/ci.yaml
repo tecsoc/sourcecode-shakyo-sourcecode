@@ -21,7 +21,6 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: yarn install
         run: yarn install --frozen-lockfile --prefer-offline
-        working-directory: ./renewal/app/next-app
       - name: Prettier Code Check
         run: yarn fmt:check
       - name: yarn lint
