@@ -1,34 +1,38 @@
-'use client';
+"use client";
 
-import fetchUrlFromText from '@/app/modules/fetchUrlFromText';
-import { TextField, Button } from '@mui/material';
-import { EditorView } from 'codemirror';
-import { DOMEventMap } from '@codemirror/view';
-import React, { useState, useCallback, useMemo, useRef } from 'react';
-import styles from './TopPage.module.sass';
-import CodeMirrorEditor from '@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor';
-import { useDidUpdateEffect } from '@/app/modules/useDidUpdateEffect';
+import fetchUrlFromText from "@/app/modules/fetchUrlFromText";
+import { TextField, Button } from "@mui/material";
+import { EditorView } from "codemirror";
+import { DOMEventMap } from "@codemirror/view";
+import React, { useCallback, useMemo, useRef } from "react";
+import styles from "./TopPage.module.sass";
+import CodeMirrorEditor from "@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor";
+import { useDidUpdateEffect } from "@/app/modules/useDidUpdateEffect";
+import useLocalStorage from "@/app/modules/useLocalStorage";
 
 const TopPage = () => {
   const importSourceUrlRef = useRef<HTMLInputElement | null>(null);
-  const [typingSourceCodeString, setTypingSourceCodeString] = useState<string>('');
-  const [answerSourceCodeString, setAnswerSourceCodeString] = useState<string>('');
+  const [typingSourceCodeString, setTypingSourceCodeString] = useLocalStorage<string>("typingSourceCodeString", "");
+  const [answerSourceCodeString, setAnswerSourceCodeString] = useLocalStorage<string>("answerSourceCodeString", "");
 
   const importSourceCode = useCallback(async () => {
     const url = importSourceUrlRef.current?.value;
     if (url) {
       setAnswerSourceCodeString(await fetchUrlFromText(url));
-      setTypingSourceCodeString('');
+      setTypingSourceCodeString("");
     }
-  }, [setAnswerSourceCodeString]);
+  }, [setAnswerSourceCodeString, setTypingSourceCodeString]);
 
-  const editorOnInput = useCallback((event: DOMEventMap['input'], updateView: EditorView) => {
-    const codeString = updateView.state.doc.toString();
-    setTypingSourceCodeString(codeString);
-  }, []);
+  const editorOnInput = useCallback(
+    (event: DOMEventMap["input"], updateView: EditorView) => {
+      const codeString = updateView.state.doc.toString();
+      setTypingSourceCodeString(codeString);
+    },
+    [setTypingSourceCodeString]
+  );
 
   useDidUpdateEffect(() => {
-    let updateString = '';
+    let updateString = "";
     const _wrongFlag = ((): boolean => {
       for (let i = 0; i < typingSourceCodeString.length; i++) {
         const char = typingSourceCodeString[i];
