@@ -1,7 +1,8 @@
-デプロイ先→[https://tecsoc.github.io/syakyo-typing/](https://tecsoc.github.io/syakyo-typing/)
+デプロイ先 →[https://tecsoc.github.io/syakyo-typing/](https://tecsoc.github.io/syakyo-typing/)
 
 **使い方**
-- 写経したいコードのGitHubのRawURLを入力
+
+- 写経したいコードの GitHub の RawURL を入力
 - インポートボタンをクリック
 - 右側にお手本が表示されるので左側のエディターにタイピング
 
