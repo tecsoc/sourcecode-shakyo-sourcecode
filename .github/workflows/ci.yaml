@@ -36,7 +36,7 @@ jobs:
         with:
           path: ./out
   deploy:
-    if: ${{ (github.head_ref == 'main') && (github.event_name != 'pull_request') }}
+    if: ${{ (github.head_ref == 'main') && (github.event_name == 'push') }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
