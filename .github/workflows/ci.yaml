@@ -1,4 +1,4 @@
-name: CI
+name: Deploy
 on:
   push:
     branches:
@@ -36,6 +36,7 @@ jobs:
         with:
           path: ./out
   deploy:
+    if: ${{ (github.head_ref == main) && (github.event_name != 'pull_request') }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
