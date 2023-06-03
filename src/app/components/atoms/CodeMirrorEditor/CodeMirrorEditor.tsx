@@ -1,15 +1,31 @@
-'use client';
+"use client";
 
-import React, { useCallback, useRef } from 'react';
-import { EditorView } from 'codemirror';
-import { EditorState, Extension } from '@codemirror/state';;
-import { DOMEventHandlers, ViewUpdate, lineNumbers, highlightActiveLineGutter, highlightSpecialChars, highlightActiveLine, dropCursor, drawSelection, keymap } from '@codemirror/view';
-import { javascript } from '@codemirror/lang-javascript';
-import { defaultKeymap } from '@codemirror/commands';
-import { highlightSelectionMatches } from '@codemirror/search';
-import { foldGutter, defaultHighlightStyle, syntaxHighlighting, bracketMatching, foldKeymap } from '@codemirror/language';
-import { autocompletion } from '@codemirror/autocomplete';
-import styles from './CodeMirrorEditor.module.sass';
+import React, { useCallback, useRef } from "react";
+import { EditorView } from "codemirror";
+import { EditorState, Extension } from "@codemirror/state";
+import {
+  DOMEventHandlers,
+  ViewUpdate,
+  lineNumbers,
+  highlightActiveLineGutter,
+  highlightSpecialChars,
+  highlightActiveLine,
+  dropCursor,
+  drawSelection,
+  keymap
+} from "@codemirror/view";
+import { javascript } from "@codemirror/lang-javascript";
+import { defaultKeymap } from "@codemirror/commands";
+import { highlightSelectionMatches } from "@codemirror/search";
+import {
+  foldGutter,
+  defaultHighlightStyle,
+  syntaxHighlighting,
+  bracketMatching,
+  foldKeymap
+} from "@codemirror/language";
+import { autocompletion } from "@codemirror/autocomplete";
+import styles from "./CodeMirrorEditor.module.sass";
 
 type EventHandlerReturnValueType = boolean | void;
 type CodeMirrorProps = {
@@ -32,14 +48,12 @@ const customBasicSetup = [
   autocompletion(),
   highlightActiveLine(),
   highlightSelectionMatches(),
-  keymap.of([
-    ...foldKeymap
-  ])
+  keymap.of([...foldKeymap])
 ];
 
 const CodeMirror = ({
   extensions = [],
-  value = '',
+  value = "",
   enable = true,
   onChange = () => {},
   domEventHandlers = {}

@@ -6,10 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings 0",
     "lint:fix": "yarn lint --fix",
     "fmt": "prettier --write .",
-    "fmt:check": "prettier --write .",
+    "fmt:check": "prettier --check .",
     "fix-all": "yarn lint:fix && yarn fmt"
   },
   "dependencies": {

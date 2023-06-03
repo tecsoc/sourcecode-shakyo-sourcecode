@@ -1,4 +1,4 @@
-import { useRef, useEffect, EffectCallback, DependencyList } from 'react';
+import { useRef, useEffect, EffectCallback, DependencyList } from "react";
 
 export const useDidUpdateEffect = (fn: EffectCallback, deps?: DependencyList) => {
   const didMountRef = useRef(false);
