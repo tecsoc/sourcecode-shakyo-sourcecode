@@ -1,11 +1,29 @@
 "use client";
 
 import React, { useCallback, useRef } from "react";
-import { EditorView, basicSetup } from "codemirror";
+import { EditorView } from "codemirror";
 import { EditorState, Extension } from "@codemirror/state";
-import { DOMEventHandlers, ViewUpdate } from "@codemirror/view";
+import {
+  DOMEventHandlers,
+  ViewUpdate,
+  lineNumbers,
+  highlightActiveLineGutter,
+  highlightSpecialChars,
+  highlightActiveLine,
+  dropCursor,
+  drawSelection,
+  keymap
+} from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { defaultKeymap } from "@codemirror/commands";
+import { highlightSelectionMatches } from "@codemirror/search";
+import {
+  foldGutter,
+  defaultHighlightStyle,
+  syntaxHighlighting,
+  bracketMatching,
+  foldKeymap
+} from "@codemirror/language";
 import { autocompletion } from "@codemirror/autocomplete";
 import styles from "./CodeMirrorEditor.module.sass";
 
@@ -17,6 +35,21 @@ type CodeMirrorProps = {
   onChange?: (updateView: EditorView) => EventHandlerReturnValueType;
   domEventHandlers?: DOMEventHandlers<any>;
 };
+
+const customBasicSetup = [
+  lineNumbers(),
+  highlightActiveLineGutter(),
+  highlightSpecialChars(),
+  foldGutter(),
+  drawSelection(),
+  dropCursor(),
+  syntaxHighlighting(defaultHighlightStyle),
+  bracketMatching(),
+  autocompletion(),
+  highlightActiveLine(),
+  highlightSelectionMatches(),
+  keymap.of([...foldKeymap])
+];
 
 const CodeMirror = ({
   extensions = [],
@@ -33,7 +66,7 @@ const CodeMirror = ({
       state: EditorState.create({
         doc: value,
         extensions: [
-          basicSetup,
+          customBasicSetup,
           javascript(),
           EditorView.editable.of(enable),
           EditorView.updateListener.of((update: ViewUpdate) => {

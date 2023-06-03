@@ -47,7 +47,9 @@ const TopPage = () => {
     if (updateString !== typingSourceCodeString) setTypingSourceCodeString(updateString);
   }, [typingSourceCodeString, answerSourceCodeString]);
 
-  const editorOnPaste = useCallback(() => false, []);
+  const editorOnPaste = useCallback((event: DOMEventMap["paste"], _updateView: EditorView) => {
+    event.preventDefault();
+  }, []);
   const domEventHandlers = useMemo(
     () => ({
       paste: editorOnPaste,
@@ -71,10 +73,7 @@ const TopPage = () => {
         </Button>
       </div>
       <div className={styles.editor_wrapper}>
-        {/* <CodeMirrorEditor onChange={EditorOnChange} domEventHandlers={domEventHandlers}/> */}
         <CodeMirrorEditor value={typingSourceCodeString} domEventHandlers={domEventHandlers} />
-        {/* <CodeMirrorEditor />
-        <CodeMirrorEditor /> */}
         <CodeMirrorEditor value={answerSourceCodeString} enable={false} />
       </div>
     </main>
