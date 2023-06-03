@@ -9,7 +9,7 @@
     "lint": "next lint",
     "lint:fix": "yarn lint --fix",
     "fmt": "prettier --write .",
-    "fmt:check": "prettier --write .",
+    "fmt:check": "prettier --check .",
     "fix-all": "yarn lint:fix && yarn fmt"
   },
   "dependencies": {
