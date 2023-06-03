@@ -1,3 +1,3 @@
 "use client";
-import TopPage from '@/app/components/pages/TopPage';
+import TopPage from "@/app/components/pages/TopPage";
 export default TopPage;

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useCallback, useRef } from 'react';
-import { EditorView, basicSetup } from 'codemirror';
-import { EditorState, Extension } from '@codemirror/state';
-import { DOMEventHandlers, ViewUpdate } from '@codemirror/view';
-import { javascript } from '@codemirror/lang-javascript';
-import { defaultKeymap } from '@codemirror/commands';
-import { autocompletion } from '@codemirror/autocomplete';
-import styles from './CodeMirrorEditor.module.sass';
+import React, { useCallback, useRef } from "react";
+import { EditorView, basicSetup } from "codemirror";
+import { EditorState, Extension } from "@codemirror/state";
+import { DOMEventHandlers, ViewUpdate } from "@codemirror/view";
+import { javascript } from "@codemirror/lang-javascript";
+import { defaultKeymap } from "@codemirror/commands";
+import { autocompletion } from "@codemirror/autocomplete";
+import styles from "./CodeMirrorEditor.module.sass";
 
 type EventHandlerReturnValueType = boolean | void;
 type CodeMirrorProps = {
@@ -20,7 +20,7 @@ type CodeMirrorProps = {
 
 const CodeMirror = ({
   extensions = [],
-  value = '',
+  value = "",
   enable = true,
   onChange = () => {},
   domEventHandlers = {}
