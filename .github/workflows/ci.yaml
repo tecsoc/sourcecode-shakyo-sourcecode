@@ -36,7 +36,7 @@ jobs:
         with:
           path: ./out
   deploy:
-    if: ${{ github.head_ref == 'main' }}
+    if: ${{ github.ref_name == 'main' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
