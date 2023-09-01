@@ -15,15 +15,8 @@ import {
   keymap
 } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
-import { defaultKeymap } from "@codemirror/commands";
 import { highlightSelectionMatches } from "@codemirror/search";
-import {
-  foldGutter,
-  defaultHighlightStyle,
-  syntaxHighlighting,
-  bracketMatching,
-  foldKeymap
-} from "@codemirror/language";
+import { foldGutter, defaultHighlightStyle, syntaxHighlighting, foldKeymap } from "@codemirror/language";
 import { autocompletion } from "@codemirror/autocomplete";
 import styles from "./CodeMirrorEditor.module.sass";
 
@@ -44,7 +37,6 @@ const customBasicSetup = [
   drawSelection(),
   dropCursor(),
   syntaxHighlighting(defaultHighlightStyle),
-  bracketMatching(),
   autocompletion(),
   highlightActiveLine(),
   highlightSelectionMatches(),
@@ -60,33 +52,32 @@ const CodeMirror = ({
 }: CodeMirrorProps) => {
   const editView = useRef<EditorView | null>(null);
 
-  const ref = useCallback((node: HTMLDivElement) => {
-    console.log(defaultKeymap);
-    editView.current = new EditorView({
-      state: EditorState.create({
-        doc: value,
-        extensions: [
-          customBasicSetup,
-          javascript(),
-          EditorView.editable.of(enable),
-          EditorView.updateListener.of((update: ViewUpdate) => {
-            if (onChange) onChange(update.view);
-          }),
-          EditorView.domEventHandlers(domEventHandlers),
-          autocompletion({
-            activateOnTyping: false,
-            defaultKeymap: false
-          }),
-          ...extensions
-        ]
-      }),
-      parent: node
-    });
-    return () => {
-      editView.current?.destroy();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const ref = useCallback(
+    (node: HTMLDivElement) => {
+      if (!node || editView.current) return;
+      editView.current = new EditorView({
+        state: EditorState.create({
+          doc: value,
+          extensions: [
+            customBasicSetup,
+            javascript(),
+            EditorView.editable.of(enable),
+            EditorView.updateListener.of((update: ViewUpdate) => {
+              if (onChange) onChange(update.view);
+            }),
+            EditorView.domEventHandlers(domEventHandlers),
+            autocompletion({
+              activateOnTyping: false,
+              defaultKeymap: false
+            }),
+            ...extensions
+          ]
+        }),
+        parent: node
+      });
+    },
+    [extensions, enable, onChange, domEventHandlers, value]
+  );
 
   if (editView.current && editView.current.state.doc.toString() !== value) {
     editView.current?.dispatch({
