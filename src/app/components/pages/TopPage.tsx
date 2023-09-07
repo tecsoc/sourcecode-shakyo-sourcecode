@@ -60,17 +60,16 @@ const TopPage = () => {
 
   return (
     <main className={styles.main}>
-      <h1>写経タイピング</h1>
+      <h1>Sourcecode Shakyo Typing</h1>
+      <h2>(means to copy sutras by hand on paper)</h2>
       <div className={styles.github_url_wrapper}>
         <TextField
           fullWidth
           defaultValue="https://raw.githubusercontent.com/mui/material-ui/master/scripts/build.mjs"
-          placeholder="GitHub コードURL"
+          placeholder="GitHub Sourcecode raw URL"
           inputRef={importSourceUrlRef}
         />
-        <Button variant="contained" onClick={importSourceCode}>
-          インポート
-        </Button>
+        <Button variant="contained" onClick={importSourceCode}>Import</Button>
       </div>
       <div className={styles.editor_wrapper}>
         <CodeMirrorEditor value={typingSourceCodeString} domEventHandlers={domEventHandlers} />
