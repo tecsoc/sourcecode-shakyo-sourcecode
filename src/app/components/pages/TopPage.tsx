@@ -87,8 +87,8 @@ const TopPage = () => {
         <Button variant="contained" onClick={importSourceCode}>Import</Button>
       </div>
       <div className={styles.editor_wrapper}>
-        <CodeMirrorEditor value={typingSourceCodeString} extensions={extensions} />
-        <CodeMirrorEditor value={answerSourceCodeString} editable={false} />
+        <CodeMirrorEditor value={typingSourceCodeString} extensions={extensions} fileName={importSourceUrlElementRef.current?.value} />
+        <CodeMirrorEditor value={answerSourceCodeString} editable={false} fileName={importSourceUrlElementRef.current?.value} />
       </div>
     </main>
   );
