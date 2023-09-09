@@ -13,10 +13,16 @@ import {
   keymap
 } from "@codemirror/view";
 import { highlightSelectionMatches } from "@codemirror/search";
-import { foldGutter, defaultHighlightStyle, syntaxHighlighting, foldKeymap, LanguageDescription } from "@codemirror/language";
+import {
+  foldGutter,
+  defaultHighlightStyle,
+  syntaxHighlighting,
+  foldKeymap,
+  LanguageDescription
+} from "@codemirror/language";
 import { autocompletion } from "@codemirror/autocomplete";
 import styles from "./CodeMirrorEditor.module.sass";
-import {languages} from "@codemirror/language-data";
+import { languages } from "@codemirror/language-data";
 
 type CodeMirrorProps = {
   extensions?: Extension[];
@@ -36,7 +42,7 @@ const customBasicSetup = [
   autocompletion(),
   highlightActiveLine(),
   highlightSelectionMatches(),
-  keymap.of([...foldKeymap]),
+  keymap.of([...foldKeymap])
 ];
 
 const defaultExtensions = [
@@ -59,7 +65,8 @@ const CodeMirror = ({ extensions = [], value = "", editable = true, fileName }: 
           doc: value,
           extensions: [
             ...defaultExtensions,
-            EditorView.editable.of(editable), ...extensions,
+            EditorView.editable.of(editable),
+            ...extensions,
             ...(lang?.extension ? [lang.extension] : [])
           ]
         }),

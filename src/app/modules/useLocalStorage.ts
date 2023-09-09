@@ -38,8 +38,8 @@ export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: 
       }
     },
     [key]
-  ); 
-  
+  );
+
   const ref = useRef<T>(null!);
   const setRef = useCallback(
     (node: T) => {
@@ -50,7 +50,6 @@ export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: 
     },
     [key, initialValue, updateRef]
   );
-
 
   const returnValues = useMemo(
     () =>
