@@ -3,7 +3,7 @@
 import fetchUrlFromText from "@/app/modules/fetchUrlFromText";
 import { TextField, Button } from "@mui/material";
 import { EditorView } from "codemirror";
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./TopPage.module.sass";
 import CodeMirrorEditor from "@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor";
 import { useLocalStorageInputElementRef, useLocalStorageState} from "@/app/modules/useLocalStorage";
@@ -37,7 +37,6 @@ const TopPage = () => {
         const concatStr = prevStr + currentStr;
         const nextIsCollect = concatStr === answerSourceCodeString.slice(0, concatStr.length);
         const nextStr = nextIsCollect ? concatStr : prevStr;
-        console.log(`concatStr: ${concatStr}, nextIsCollect: ${nextIsCollect}, nextStr: ${nextStr}\nconcatStr: ${answerSourceCodeString},`);
         return [nextIsCollect, nextStr]
       },[true, ""]);
       updateView.dispatch({
@@ -65,7 +64,7 @@ const TopPage = () => {
     [editorOnPaste, editorOnInput]
   );
     
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       const text = await fetchUrlFromText(importSourceUrlElementRef.current.value);
       setAnswerSourceCodeString(text);
