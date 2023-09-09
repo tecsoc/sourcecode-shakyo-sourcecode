@@ -3,14 +3,10 @@
 import fetchUrlFromText from "@/app/modules/fetchUrlFromText";
 import { TextField, Button } from "@mui/material";
 import { EditorView } from "codemirror";
-import { DOMEventMap } from "@codemirror/view";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import styles from "./TopPage.module.sass";
 import CodeMirrorEditor from "@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor";
 import { useLocalStorageInputElementRef, useLocalStorageState} from "@/app/modules/useLocalStorage";
-import {
-  DOMEventHandlers,
-} from "@codemirror/view";
 
 
 const TopPage = () => {
@@ -55,7 +51,7 @@ const TopPage = () => {
     [answerSourceCodeString]
   );
 
-  const editorOnPaste = useCallback((event: DOMEventMap["paste"], _updateView: EditorView) => {
+  const editorOnPaste = useCallback((event: ClipboardEvent, _updateView: EditorView) => {
     event.preventDefault();
   }, []);
 

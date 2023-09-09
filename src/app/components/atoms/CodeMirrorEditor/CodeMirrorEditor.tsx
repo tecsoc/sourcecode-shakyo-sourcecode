@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { EditorView } from "codemirror";
 import { EditorState, Extension, StateEffect } from "@codemirror/state";
 import {
-  DOMEventHandlers,
   lineNumbers,
   highlightActiveLineGutter,
   highlightSpecialChars,
