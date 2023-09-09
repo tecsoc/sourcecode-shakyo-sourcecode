@@ -44,27 +44,19 @@ const defaultExtensions = [
   autocompletion({
     activateOnTyping: false,
     defaultKeymap: false
-  }),
+  })
 ];
 
-const CodeMirror = ({
-  extensions = [],
-  value = "",
-  editable = true,
-}: CodeMirrorProps) => {
+const CodeMirror = ({ extensions = [], value = "", editable = true }: CodeMirrorProps) => {
   const editView = useRef<EditorView>(null!);
 
   const ref = useCallback(
     (node: HTMLDivElement) => {
-       if (editView.current) return;  
+      if (editView.current) return;
       editView.current = new EditorView({
         state: EditorState.create({
           doc: value,
-          extensions: [
-            ...defaultExtensions,
-            EditorView.editable.of(editable),
-            ...extensions
-          ]
+          extensions: [...defaultExtensions, EditorView.editable.of(editable), ...extensions]
         }),
         parent: node
       });
@@ -79,19 +71,14 @@ const CodeMirror = ({
         to: editView.current?.state.doc.length,
         insert: value
       }
-    })
+    });
   }, [value]);
 
   useEffect(() => {
     //estensionを取得して、domEventHandlersを上書き更新するトランザクションを作成
     editView.current.dispatch({
-      effects: StateEffect.reconfigure.of([
-        ...defaultExtensions,
-        EditorView.editable.of(editable),
-        ...extensions
-      ])
+      effects: StateEffect.reconfigure.of([...defaultExtensions, EditorView.editable.of(editable), ...extensions])
     });
-    
   }, [editable, extensions]);
 
   return <div className={styles.editor} ref={ref} />;

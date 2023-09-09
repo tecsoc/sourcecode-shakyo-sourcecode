@@ -1,6 +1,7 @@
 # Sourcecode Shakyo (means to copy sutras by hand on paper) Typing
 
 ## How to use
+
 - Enter the GitHub RawURL of the code you want to copy
 - Click the Import button
 - You will see the example on the right side of the screen, and type in the editor on the left side.
