@@ -12,16 +12,23 @@ import {
   drawSelection,
   keymap
 } from "@codemirror/view";
-import { javascript } from "@codemirror/lang-javascript";
 import { highlightSelectionMatches } from "@codemirror/search";
-import { foldGutter, defaultHighlightStyle, syntaxHighlighting, foldKeymap } from "@codemirror/language";
+import {
+  foldGutter,
+  defaultHighlightStyle,
+  syntaxHighlighting,
+  foldKeymap,
+  LanguageDescription
+} from "@codemirror/language";
 import { autocompletion } from "@codemirror/autocomplete";
 import styles from "./CodeMirrorEditor.module.sass";
+import { languages } from "@codemirror/language-data";
 
 type CodeMirrorProps = {
   extensions?: Extension[];
   value?: string;
   editable?: boolean;
+  fileName: string;
 };
 
 const customBasicSetup = [
@@ -40,28 +47,33 @@ const customBasicSetup = [
 
 const defaultExtensions = [
   customBasicSetup,
-  javascript(),
   autocompletion({
     activateOnTyping: false,
     defaultKeymap: false
   })
 ];
 
-const CodeMirror = ({ extensions = [], value = "", editable = true }: CodeMirrorProps) => {
+const CodeMirror = ({ extensions = [], value = "", editable = true, fileName }: CodeMirrorProps) => {
   const editView = useRef<EditorView>(null!);
 
   const ref = useCallback(
-    (node: HTMLDivElement) => {
+    async (node: HTMLDivElement) => {
+      const lang = await LanguageDescription.matchFilename(languages, fileName)?.load();
       if (editView.current) return;
       editView.current = new EditorView({
         state: EditorState.create({
           doc: value,
-          extensions: [...defaultExtensions, EditorView.editable.of(editable), ...extensions]
+          extensions: [
+            ...defaultExtensions,
+            EditorView.editable.of(editable),
+            ...extensions,
+            ...(lang?.extension ? [lang.extension] : [])
+          ]
         }),
         parent: node
       });
     },
-    [editable, extensions, value]
+    [editable, extensions, fileName, value]
   );
 
   useEffect(() => {
@@ -75,11 +87,18 @@ const CodeMirror = ({ extensions = [], value = "", editable = true }: CodeMirror
   }, [value]);
 
   useEffect(() => {
-    //estensionを取得して、domEventHandlersを上書き更新するトランザクションを作成
-    editView.current.dispatch({
-      effects: StateEffect.reconfigure.of([...defaultExtensions, EditorView.editable.of(editable), ...extensions])
-    });
-  }, [editable, extensions]);
+    (async () => {
+      const lang = await LanguageDescription.matchFilename(languages, fileName)?.load();
+      editView.current.dispatch({
+        effects: StateEffect.reconfigure.of([
+          ...defaultExtensions,
+          EditorView.editable.of(editable),
+          ...(lang?.extension ? [lang.extension] : []),
+          ...extensions
+        ])
+      });
+    })();
+  }, [editable, extensions, fileName]);
 
   return <div className={styles.editor} ref={ref} />;
 };

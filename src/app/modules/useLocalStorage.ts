@@ -2,7 +2,7 @@ import isClientSide from "@/app/modules/isClientSide";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 
 export const getInitialLocalStorageValue = <T>(key: string, initialValue: T): T =>
-  JSON.parse((isClientSide() && (localStorage?.getItem(key) ?? false)) || JSON.stringify(initialValue));
+  JSON.parse((isClientSide() && localStorage?.getItem(key)) || JSON.stringify(initialValue));
 export const setLocalStorageValue = <T>(key: string, value: T) => localStorage.setItem(key, JSON.stringify(value));
 
 export const useLocalStorageState = <T>(key: string, initialValue: T) => {
@@ -28,22 +28,7 @@ export const useLocalStorageState = <T>(key: string, initialValue: T) => {
 };
 
 export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: string, initialValue: string) => {
-  const ref = useRef<T>(null!);
-  const setRef = useCallback(
-    (node: T) => {
-      if (!node) return;
-      try {
-        const value = getInitialLocalStorageValue(key, initialValue);
-        node.value = value;
-        ref.current = node;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [key, initialValue]
-  );
-
-  const upDateRef = useCallback(
+  const updateRef = useCallback(
     (value: string) => {
       try {
         setLocalStorageValue(key, value);
@@ -55,14 +40,25 @@ export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: 
     [key]
   );
 
+  const ref = useRef<T>(null!);
+  const setRef = useCallback(
+    (node: T) => {
+      if (!node) return;
+      const value = getInitialLocalStorageValue(key, initialValue);
+      ref.current = node;
+      updateRef(value);
+    },
+    [key, initialValue, updateRef]
+  );
+
   const returnValues = useMemo(
     () =>
-      [ref, setRef, upDateRef] as [
+      [ref, setRef, updateRef] as [
         React.MutableRefObject<T>,
         (node: T) => void,
         React.Dispatch<React.SetStateAction<string>>
       ],
-    [ref, setRef, upDateRef]
+    [ref, setRef, updateRef]
   );
   return returnValues;
 };
