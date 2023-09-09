@@ -8,6 +8,9 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } fro
 import styles from "./TopPage.module.sass";
 import CodeMirrorEditor from "@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor";
 import { useLocalStorageInputElementRef, useLocalStorageState} from "@/app/modules/useLocalStorage";
+import {
+  DOMEventHandlers,
+} from "@codemirror/view";
 
 
 const TopPage = () => {
@@ -31,47 +34,47 @@ const TopPage = () => {
 
   
   const editorOnInput = useCallback(
-    (event: DOMEventMap["input"], updateView: EditorView) => {
+    (e: Event, updateView: EditorView) => {
       const codeString = updateView.state.doc.toString();
-      setTypingSourceCodeString(codeString);
+      const [_isCorrect, updateString] = codeString.split("").reduce(([currntIsCollect, prevStr], currentStr) => {
+        if (!currntIsCollect) return [currntIsCollect, prevStr];
+        const concatStr = prevStr + currentStr;
+        const nextIsCollect = concatStr === answerSourceCodeString.slice(0, concatStr.length);
+        const nextStr = nextIsCollect ? concatStr : prevStr;
+        console.log(`concatStr: ${concatStr}, nextIsCollect: ${nextIsCollect}, nextStr: ${nextStr}\nconcatStr: ${answerSourceCodeString},`);
+        return [nextIsCollect, nextStr]
+      },[true, ""]);
+      updateView.dispatch({
+        changes: {
+          from: 0,
+          to: codeString.length,
+          insert: updateString
+        }
+      });
     },
-    [setTypingSourceCodeString]
+    [answerSourceCodeString]
   );
 
   const editorOnPaste = useCallback((event: DOMEventMap["paste"], _updateView: EditorView) => {
     event.preventDefault();
   }, []);
 
-  const domEventHandlers = useMemo(
-    () => ({
-      paste: editorOnPaste,
-      input: editorOnInput
-    }),
+  const extensions = useMemo(
+    () => [
+      EditorView.domEventHandlers({
+        paste: editorOnPaste,
+        input: editorOnInput,
+      })
+    ],
     [editorOnPaste, editorOnInput]
-    );
+  );
     
-    useLayoutEffect(() => {
-      (async () => {
-        const text = await fetchUrlFromText(importSourceUrlElementRef.current.value);
-        setAnswerSourceCodeString(text);
-      })();
-    },[setAnswerSourceCodeString, importSourceUrlElementRef]);
-
-  useEffect(() => {
-    let updateString = "";
-    const _wrongFlag = ((): boolean => {
-      for (let i = 0; i < typingSourceCodeString.length; i++) {
-        const char = typingSourceCodeString[i];
-        if (char === answerSourceCodeString[i]) {
-          updateString += char;
-        } else {
-          return true;
-        }
-      }
-      return false;
+  useLayoutEffect(() => {
+    (async () => {
+      const text = await fetchUrlFromText(importSourceUrlElementRef.current.value);
+      setAnswerSourceCodeString(text);
     })();
-    if (updateString !== typingSourceCodeString) setTypingSourceCodeString(updateString);
-  }, [typingSourceCodeString, answerSourceCodeString, setTypingSourceCodeString]);
+  },[setAnswerSourceCodeString, importSourceUrlElementRef]);
 
   useEffect(() => {
     setTypingSourceCodeString("");
@@ -90,8 +93,8 @@ const TopPage = () => {
         <Button variant="contained" onClick={importSourceCode}>Import</Button>
       </div>
       <div className={styles.editor_wrapper}>
-        <CodeMirrorEditor value={typingSourceCodeString} domEventHandlers={domEventHandlers} />
-        <CodeMirrorEditor value={answerSourceCodeString} enable={false} />
+        <CodeMirrorEditor value={typingSourceCodeString} extensions={extensions} />
+        <CodeMirrorEditor value={answerSourceCodeString} editable={false} />
       </div>
     </main>
   );

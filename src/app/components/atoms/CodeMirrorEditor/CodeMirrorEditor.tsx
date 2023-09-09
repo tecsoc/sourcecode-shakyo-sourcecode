@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { EditorView } from "codemirror";
-import { EditorState, Extension } from "@codemirror/state";
+import { EditorState, Extension, StateEffect } from "@codemirror/state";
 import {
   DOMEventHandlers,
-  ViewUpdate,
   lineNumbers,
   highlightActiveLineGutter,
   highlightSpecialChars,
@@ -20,13 +19,10 @@ import { foldGutter, defaultHighlightStyle, syntaxHighlighting, foldKeymap } fro
 import { autocompletion } from "@codemirror/autocomplete";
 import styles from "./CodeMirrorEditor.module.sass";
 
-type EventHandlerReturnValueType = boolean | void;
 type CodeMirrorProps = {
   extensions?: Extension[];
   value?: string;
-  enable?: boolean;
-  onChange?: (updateView: EditorView) => EventHandlerReturnValueType;
-  domEventHandlers?: DOMEventHandlers<any>;
+  editable?: boolean;
 };
 
 const customBasicSetup = [
@@ -43,51 +39,61 @@ const customBasicSetup = [
   keymap.of([...foldKeymap])
 ];
 
+const defaultExtensions = [
+  customBasicSetup,
+  javascript(),
+  autocompletion({
+    activateOnTyping: false,
+    defaultKeymap: false
+  }),
+];
+
 const CodeMirror = ({
   extensions = [],
   value = "",
-  enable = true,
-  onChange = () => {},
-  domEventHandlers = {}
+  editable = true,
 }: CodeMirrorProps) => {
-  const editView = useRef<EditorView | null>(null);
+  const editView = useRef<EditorView>(null!);
 
   const ref = useCallback(
     (node: HTMLDivElement) => {
-      if (!node || editView.current) return;
+       if (editView.current) return;  
       editView.current = new EditorView({
         state: EditorState.create({
           doc: value,
           extensions: [
-            customBasicSetup,
-            javascript(),
-            EditorView.editable.of(enable),
-            EditorView.updateListener.of((update: ViewUpdate) => {
-              if (onChange) onChange(update.view);
-            }),
-            EditorView.domEventHandlers(domEventHandlers),
-            autocompletion({
-              activateOnTyping: false,
-              defaultKeymap: false
-            }),
+            ...defaultExtensions,
+            EditorView.editable.of(editable),
             ...extensions
           ]
         }),
         parent: node
       });
     },
-    [extensions, enable, onChange, domEventHandlers, value]
+    [editable, extensions, value]
   );
 
-  if (editView.current && editView.current.state.doc.toString() !== value) {
-    editView.current?.dispatch({
+  useEffect(() => {
+    editView.current.dispatch({
       changes: {
         from: 0,
         to: editView.current?.state.doc.length,
         insert: value
       }
+    })
+  }, [value]);
+
+  useEffect(() => {
+    //estensionを取得して、domEventHandlersを上書き更新するトランザクションを作成
+    editView.current.dispatch({
+      effects: StateEffect.reconfigure.of([
+        ...defaultExtensions,
+        EditorView.editable.of(editable),
+        ...extensions
+      ])
     });
-  }
+    
+  }, [editable, extensions]);
 
   return <div className={styles.editor} ref={ref} />;
 };
