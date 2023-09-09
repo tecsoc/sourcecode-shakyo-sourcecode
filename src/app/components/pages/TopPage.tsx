@@ -4,25 +4,32 @@ import fetchUrlFromText from "@/app/modules/fetchUrlFromText";
 import { TextField, Button } from "@mui/material";
 import { EditorView } from "codemirror";
 import { DOMEventMap } from "@codemirror/view";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import styles from "./TopPage.module.sass";
 import CodeMirrorEditor from "@/app/components/atoms/CodeMirrorEditor/CodeMirrorEditor";
-import { useDidUpdateEffect } from "@/app/modules/useDidUpdateEffect";
-import useLocalStorage from "@/app/modules/useLocalStorage";
+import { useLocalStorageInputElementRef, useLocalStorageState} from "@/app/modules/useLocalStorage";
+
 
 const TopPage = () => {
-  const importSourceUrlRef = useRef<HTMLInputElement | null>(null);
-  const [typingSourceCodeString, setTypingSourceCodeString] = useLocalStorage<string>("typingSourceCodeString", "");
-  const [answerSourceCodeString, setAnswerSourceCodeString] = useLocalStorage<string>("answerSourceCodeString", "");
+  const [importSourceUrlElementRef, setimportSourceUrlElementRef, setImportSourceUrl] = useLocalStorageInputElementRef("importSourceUrl", "");
+  const [typingSourceCodeString, setTypingSourceCodeString] = useLocalStorageState("typingSourceCodeString", "");
+  const [answerSourceCodeString, setAnswerSourceCodeString] = useState("");
 
   const importSourceCode = useCallback(async () => {
-    const url = importSourceUrlRef.current?.value;
+    const url = importSourceUrlElementRef.current.value;
     if (url) {
-      setAnswerSourceCodeString(await fetchUrlFromText(url));
-      setTypingSourceCodeString("");
+      try{
+        const text = await fetchUrlFromText(url);
+        setImportSourceUrl(url);
+        setAnswerSourceCodeString(text);
+      }
+      catch(e){
+        console.error(e);
+      }
     }
-  }, [setAnswerSourceCodeString, setTypingSourceCodeString]);
+  }, [importSourceUrlElementRef, setImportSourceUrl, setAnswerSourceCodeString]);
 
+  
   const editorOnInput = useCallback(
     (event: DOMEventMap["input"], updateView: EditorView) => {
       const codeString = updateView.state.doc.toString();
@@ -31,7 +38,26 @@ const TopPage = () => {
     [setTypingSourceCodeString]
   );
 
-  useDidUpdateEffect(() => {
+  const editorOnPaste = useCallback((event: DOMEventMap["paste"], _updateView: EditorView) => {
+    event.preventDefault();
+  }, []);
+
+  const domEventHandlers = useMemo(
+    () => ({
+      paste: editorOnPaste,
+      input: editorOnInput
+    }),
+    [editorOnPaste, editorOnInput]
+    );
+    
+    useLayoutEffect(() => {
+      (async () => {
+        const text = await fetchUrlFromText(importSourceUrlElementRef.current.value);
+        setAnswerSourceCodeString(text);
+      })();
+    },[setAnswerSourceCodeString, importSourceUrlElementRef]);
+
+  useEffect(() => {
     let updateString = "";
     const _wrongFlag = ((): boolean => {
       for (let i = 0; i < typingSourceCodeString.length; i++) {
@@ -45,18 +71,11 @@ const TopPage = () => {
       return false;
     })();
     if (updateString !== typingSourceCodeString) setTypingSourceCodeString(updateString);
-  }, [typingSourceCodeString, answerSourceCodeString]);
+  }, [typingSourceCodeString, answerSourceCodeString, setTypingSourceCodeString]);
 
-  const editorOnPaste = useCallback((event: DOMEventMap["paste"], _updateView: EditorView) => {
-    event.preventDefault();
-  }, []);
-  const domEventHandlers = useMemo(
-    () => ({
-      paste: editorOnPaste,
-      input: editorOnInput
-    }),
-    [editorOnPaste, editorOnInput]
-  );
+  useEffect(() => {
+    setTypingSourceCodeString("");
+  },[answerSourceCodeString, setTypingSourceCodeString]);
 
   return (
     <main className={styles.main}>
@@ -65,9 +84,8 @@ const TopPage = () => {
       <div className={styles.github_url_wrapper}>
         <TextField
           fullWidth
-          defaultValue="https://raw.githubusercontent.com/mui/material-ui/master/scripts/build.mjs"
-          placeholder="GitHub Sourcecode raw URL"
-          inputRef={importSourceUrlRef}
+          placeholder="GitHub sourcecode raw URL"
+          inputRef={setimportSourceUrlElementRef}
         />
         <Button variant="contained" onClick={importSourceCode}>Import</Button>
       </div>
