@@ -27,6 +27,7 @@ export const useLocalStorageState = <T>(key: string, initialValue: T) => {
 export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: string, initialValue: string) => {
   const ref = useRef<T>(null!);
   const setRef = useCallback((node: T) => {
+    if (!node) return;
     try {
       const value = getInitialLocalStorageValue(key, initialValue);
       node.value = value;
@@ -39,7 +40,7 @@ export const useLocalStorageInputElementRef = <T extends HTMLInputElement>(key: 
   const upDateRef = useCallback((value: string) => {
     try {
       setLocalStorageValue(key, value);
-      ref.current.value = value;
+      if (ref.current) ref.current.value = value;
     } catch (error) {
       console.error(error);
     }
