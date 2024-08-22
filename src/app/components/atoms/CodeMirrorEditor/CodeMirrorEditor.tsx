@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef } from "react";
-import { EditorView } from "codemirror";
+import { autocompletion } from "@codemirror/autocomplete";
+import {
+  LanguageDescription,
+  defaultHighlightStyle,
+  foldGutter,
+  foldKeymap,
+  syntaxHighlighting
+} from "@codemirror/language";
+import { languages } from "@codemirror/language-data";
+import { highlightSelectionMatches } from "@codemirror/search";
 import { EditorState, Extension, StateEffect } from "@codemirror/state";
 import {
-  lineNumbers,
+  drawSelection,
+  dropCursor,
+  highlightActiveLine,
   highlightActiveLineGutter,
   highlightSpecialChars,
-  highlightActiveLine,
-  dropCursor,
-  drawSelection,
-  keymap
+  keymap,
+  lineNumbers
 } from "@codemirror/view";
-import { highlightSelectionMatches } from "@codemirror/search";
-import {
-  foldGutter,
-  defaultHighlightStyle,
-  syntaxHighlighting,
-  foldKeymap,
-  LanguageDescription
-} from "@codemirror/language";
-import { autocompletion } from "@codemirror/autocomplete";
+import { EditorView } from "codemirror";
+import React, { useCallback, useEffect, useRef } from "react";
 import styles from "./CodeMirrorEditor.module.sass";
-import { languages } from "@codemirror/language-data";
 
 type CodeMirrorProps = {
   extensions?: Extension[];
@@ -77,7 +77,7 @@ const CodeMirror = ({ extensions = [], value = "", editable = true, fileName }: 
   );
 
   useEffect(() => {
-    editView.current.dispatch({
+    editView.current?.dispatch({
       changes: {
         from: 0,
         to: editView.current?.state.doc.length,
